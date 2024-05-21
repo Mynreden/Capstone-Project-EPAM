@@ -1,0 +1,33 @@
+DROP TABLE IF EXISTS Category;
+CREATE TABLE Category (
+    ID SERIAL PRIMARY KEY,
+    Name VARCHAR(50) NOT NULL,
+    Description TEXT
+);
+DROP TABLE IF EXISTS PRODUCTS;
+CREATE TABLE Products (
+    ID SERIAL PRIMARY KEY,
+    Name VARCHAR(255) NOT NULL,
+    Description TEXT,
+    Category_id BIGINT NOT NULL,
+    FOREIGN KEY (Category_id) REFERENCES Category(ID)
+);
+
+DROP TABLE IF EXISTS IMAGES;
+CREATE TABLE Images (
+    ID SERIAL PRIMARY KEY,
+    Product_id BIGINT NOT NULL,
+    URL VARCHAR(255) NOT NULL,
+    FOREIGN KEY (Product_id) REFERENCES Products(ID)
+);
+
+DROP TABLE IF EXISTS PRODUCTVARIANTS;
+CREATE TABLE ProductVariants (
+    ID SERIAL PRIMARY KEY,
+    Product_id BIGINT NOT NULL,
+    Size VARCHAR(50),
+    Color VARCHAR(50),
+    Price BIGINT NOT NULL,
+    FOREIGN KEY (Product_id) REFERENCES Products(ID),
+    UNIQUE(Product_id, Size, Color)
+);
