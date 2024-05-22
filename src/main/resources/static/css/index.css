@@ -187,3 +187,16 @@
     color: #007bff;
     cursor: pointer;
 }
+
+.block {
+    border: 1px solid transparent; /* Initially transparent border */
+    padding: 20px;
+    margin: 10px;
+    display: inline-block;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.selected {
+    border-color: blue; /* Blue border for selected block */
+}

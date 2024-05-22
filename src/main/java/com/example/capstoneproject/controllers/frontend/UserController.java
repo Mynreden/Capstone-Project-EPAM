@@ -35,6 +35,11 @@ public class UserController {
                                      @RequestParam String phone,
                                      HttpSession session,
                                      RedirectAttributes redirectAttributes) {
+        Optional<User> userOptional = userService.findByEmail(email);
+        if (userOptional.isPresent()){
+            redirectAttributes.addFlashAttribute("message", "This email is already taken. Please try again.");
+            return new RedirectView("/sign_in");
+        }
         Optional<User> optionalUser = userService.insertUser(new UserDTO(null, firstname, lastname, email, password, phone ));
         if (optionalUser.isEmpty()){
             redirectAttributes.addFlashAttribute("message", "Registration failed. Please try again.");

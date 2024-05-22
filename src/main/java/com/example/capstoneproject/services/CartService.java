@@ -1,9 +1,6 @@
 package com.example.capstoneproject.services;
 
-import com.example.capstoneproject.DTO.CartDTO;
-import com.example.capstoneproject.DTO.CartItemDTO;
-import com.example.capstoneproject.DTO.OrderDTO;
-import com.example.capstoneproject.DTO.OrderItemDTO;
+import com.example.capstoneproject.DTO.*;
 import com.example.capstoneproject.controllers.frontend.CartController;
 import com.example.capstoneproject.domain.*;
 import com.example.capstoneproject.repositories.*;
@@ -29,29 +26,31 @@ public class CartService {
         this.productService = productService;
     }
 
-    public Optional<Cart> createCartByUserId(Long id) {
-        Optional<Cart> optionalCart = findCartByUserId(id);
+    public Optional<Cart> getCartById(Long id) {
+        Optional<Cart> optionalCart = findCartById(id);
         if (optionalCart.isPresent()){
             return optionalCart;
         }
         cartRepository.save(new CartDTO(id, 0));
-        return findCartByUserId(id);
+        return findCartById(id);
     }
 
-    public Optional<Cart> addCartItems(CartItemDTO cartItemDTO, Long cartId){
-        CartItemDTO savedCartItemDTO = cartItemRepository.save(cartItemDTO);
+    public Optional<Cart> addCartItems(Cart cart, Long productVariantId, int quantity){
+        Optional<CartItemDTO> optionalCartItemDTO = cartItemRepository.findByCartIdAndProductVariantId(cart.getId(), productVariantId);
+        if (optionalCartItemDTO.isPresent()){
+
+        }
+        CartItemDTO savedCartItemDTO = cartItemRepository.save(new CartItemDTO(null, cart.getId(),
+                productVariantId, quantity));
         Item item = itemDTOToItem(savedCartItemDTO);
         if (item == null){
             return Optional.empty();
         }
-        return findCartById(cartId);
+        cartRepository.save(new CartDTO(cart.getId(), cart.getTotalPrice() + item.getQuantity() * item.getProductVariant().getPrice()));
+        return findCartById(cart.getId());
     }
 
-    public Optional<Cart> findCartByUserId(Long id){
-        return findCartById(id);
-    }
-
-    public Optional<Cart> findCartById(Long id){
+    private Optional<Cart> findCartById(Long id){
         Optional<CartDTO> optionalCartDTO = cartRepository.findById(id);
         if (optionalCartDTO.isEmpty()){
             return Optional.empty();
@@ -78,7 +77,41 @@ public class CartService {
             return null;
         }
         ProductVariant productVariant = optionalProductVariant.get();
-        return new Item(cartItemDTO.id, productVariant, cartItemDTO.quantity);
+        Optional<ProductDTO> optionalProductDTO = productService.getProductDTOByProductVariantId(productVariant.getId());
+
+        if (optionalProductDTO.isEmpty()){
+            return null;
+        }
+        ProductDTO productDTO = optionalProductDTO.get();
+        List<String> images = productService.getProductImagesByProductId(productDTO.id);
+        if (images.isEmpty()){
+            images.add("/img/default.png");
+        }
+        return new Item(cartItemDTO.id, productVariant, cartItemDTO.quantity, productDTO.id, productDTO.name, images.get(0));
+    }
+
+    public Optional<Cart> changeProductAmountInCart(Cart cart, Long productVariantId, int action){
+        Optional<CartItemDTO> optionalCartItemDTO = cartItemRepository.findByCartIdAndProductVariantId(cart.getId(), productVariantId);
+        if (optionalCartItemDTO.isEmpty()){
+            return Optional.empty();
+        }
+        CartItemDTO cartItemDTO = optionalCartItemDTO.get();
+
+        if (cartItemDTO.quantity + action == 0){
+            cartItemRepository.delete(cartItemDTO);
+        } else {
+            cartItemDTO.quantity = cartItemDTO.quantity + action;
+            cartItemRepository.save(cartItemDTO);
+
+        }
+        Optional<ProductVariant> optionalProductVariant = productService.getProductVariantById(productVariantId);
+        if (optionalProductVariant.isEmpty()){
+            return Optional.empty();
+        }
+
+        cartRepository.save(new CartDTO(cart.getId(), cart.getTotalPrice() + optionalProductVariant.get().getPrice() * action));
+
+        return getCartById(cart.getId());
     }
 
 }

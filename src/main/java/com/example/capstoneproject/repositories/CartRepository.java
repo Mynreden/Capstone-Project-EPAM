@@ -10,5 +10,4 @@ import java.util.Optional;
 
 @Repository
 public interface CartRepository extends JpaRepository<CartDTO, Long> {
-    Optional<CartDTO> findByUserId(@Param("userID") Long userId);
 }

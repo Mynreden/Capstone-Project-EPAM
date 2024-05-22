@@ -10,7 +10,7 @@
 </head>
 <body>
     <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
-        <ul class="container-fluid mx-3 d-flex">
+        <ul class="container-fluid mx-3 d-flex mb-0">
             <a class="navbar-brand d-flex no-wrap align-items-center" href="#">
                 <img src="/img/logo.jpg" alt="Company Logo" width="60" height="60">
             </a>
@@ -40,18 +40,26 @@
                     </a>
                 </li>
             </ul>
-            <ul class="navbar-nav ml-auto mb-2 mb-lg-0 flex-row"  th:if="${user}">
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
+            <ul class="navbar-nav ml-auto mb-2 mb-lg-0 flex-row" th:if="${user}">
+                <li class="nav-item dropdown">
+                    <a class="dropdown-toggle nav-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-user"></i>
                         <span th:utext="${user.firstname}"></span>
                     </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/users/logout">
-                        <i class="fa-solid fa-user"></i>
-                        logout
-                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a class="dropdown-item" href="/orders">
+                                <i class="fa-solid fa-cart-shopping"></i>
+                                Orders
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item" href="/users/logout">
+                                <i class="fa-solid fa-user"></i>
+                                Logout
+                            </a>
+                        </li>
+                    </ul>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="/cart">
@@ -62,6 +70,7 @@
             </ul>
         </ul>
     </nav>
+
     <div>
         <div class="d-flex w-100 flex-row justify-content-center flex-wrap" style="background-color: #faeff3;">
             <a href="#" class="mx-4 my-2 text-decoration-none fw-bold" style="color: #e91e63;">
@@ -109,7 +118,7 @@
                     <img src="/img/sale1.jpg" class="rounded-pill" height="170px">
                 </a>
                 <a href="#">
-                    <img src="/img/sale2.png" class="rounded-pill" height="170px">
+                    <img src="/img/sale2.png" class="rounded-pill mt-2 mt-md-0" height="170px">
                 </a>
             </div>
         </div>
@@ -133,30 +142,6 @@
                     </a>
                 </div>
 
-                <div class="col-6 col-md-4 col-lg-3 mb-5 mb-md-0 px-3">
-                    <a class="product-item" href="cart.jsp">
-                        <img src="/img/baldahin2.jpg" class="img-fluid product-thumbnail">
-                        <h3 class="product-title">Canopy</h3>
-                        <strong class="product-price">KZT 36.000</strong>
-                    </a>
-                </div> 
-
-                <div class="col-6 col-md-4 col-lg-3 mb-5 mb-md-0 px-3">
-                    <a class="product-item" href="cart.jsp">
-                        <img src="/img/wigwam.jpg" class="img-fluid product-thumbnail">
-                        <h3 class="product-title">Wigwam</h3>
-                        <strong class="product-price">KZT 55.000</strong>
-                    </a>
-                </div> 
-
-                <div class="col-6 col-md-4 col-lg-3 mb-5 mb-md-0 px-3">
-                    <a class="product-item" href="cart.jsp">
-                        <img src="/img/pillow.jpg" class="img-fluid product-thumbnail">
-                        <h3 class="product-title">Named Pillow</h3>
-                        <strong class="product-price">KZT 10.000</strong>
-                    </a>
-                </div> 
-
             </div>
         </div>
         
@@ -165,13 +150,13 @@
 
 
    
-    <footer class="footer mt-auto">
+    <footer class="footer mt-5 pt-4">
         <div class="container">
             <div class="row">
                 <!-- Логотип -->
                 <div class="col-md-4 d-flex align-items-center justify-content-center">
                     <a class="navbar-brand" href="#">
-                        <img src="../img/logo.jpg" alt="Company Logo" width="100" height="100">
+                        <img src="/img/logo.jpg" alt="Company Logo" width="100" height="100">
                     </a>
                 </div>
                 <!-- Ссылки на товары -->
@@ -198,7 +183,37 @@
     </footer>
 
 
+
+    <div th:if="${message}">
+        <!-- Modal -->
+        <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel">Error</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" th:utext= "${message}">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script src="https://kit.fontawesome.com/6286f41f54.js" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script></body>
+
+    <div th:if="${message}">
+        <script type="text/javascript">
+            $(window).on('load', function() {
+                $('#staticBackdrop').modal('show');
+            });
+        </script>
+    </div>
 </body>
 </html>

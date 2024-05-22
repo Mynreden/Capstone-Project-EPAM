@@ -112,12 +112,6 @@ public class ProductService implements ProductServiceInterface {
             return Optional.empty();
         }
         ProductVariantDTO productVariantDTO = optionalProductVariantDTO.get();
-
-        Optional<Product> optionalProduct = getProductById(productVariantDTO.productId);
-        if (optionalProduct.isEmpty()){
-            return Optional.empty();
-        }
-        Product product = optionalProduct.get();
         return Optional.of(new ProductVariant(productVariantDTO.id, productVariantDTO.color, productVariantDTO.size, productVariantDTO.price));
     }
 
@@ -127,6 +121,26 @@ public class ProductService implements ProductServiceInterface {
             urls.add(imageDTO.url);
         }
         return urls;
+    }
+
+    public Long getProductIdByProductVariantId(Long id){
+        Optional<ProductVariantDTO> optionalProductVariantDTO = productVariantRepository.findById(id);
+        if (optionalProductVariantDTO.isEmpty()){
+            return null;
+        }
+        return optionalProductVariantDTO.get().productId;
+    }
+
+    Optional<ProductDTO> getProductDTOByProductVariantId(Long id){
+        Optional<ProductVariantDTO> optionalProductVariantDTO = productVariantRepository.findById(id);
+        if (optionalProductVariantDTO.isEmpty()){
+            return Optional.empty();
+        }
+        return productRepository.findById(optionalProductVariantDTO.get().productId);
+    }
+
+    List<String> getProductImagesByProductId(Long id){
+        return extractURLFromImageDTO(imageRepository.findAllByProductId(id));
     }
 
 }

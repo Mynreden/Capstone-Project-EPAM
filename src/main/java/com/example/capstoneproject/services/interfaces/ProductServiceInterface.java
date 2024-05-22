@@ -1,5 +1,6 @@
 package com.example.capstoneproject.services.interfaces;
 
+import com.example.capstoneproject.DTO.ProductDTO;
 import com.example.capstoneproject.domain.Category;
 import com.example.capstoneproject.domain.Product;
 import com.example.capstoneproject.domain.ProductVariant;
@@ -14,4 +15,5 @@ public interface ProductServiceInterface {
     public List<ProductVariant> getAllProductVariantsByProductId(Long id);
     public Optional<ProductVariant> getProductVariantById(Long id);
 
-}
+
+    }

@@ -17,7 +17,7 @@ CREATE TABLE Orders (
     total_price INT NOT NULL,
     address_id BIGINT,
     FOREIGN KEY (user_id) REFERENCES Users(id),
-    FOREIGN KEY (total_price) REFERENCES Addresses(id)
+    FOREIGN KEY (address_id) REFERENCES Addresses(id)
 );
 
 DROP TABLE IF EXISTS ORDER_ITEMS;

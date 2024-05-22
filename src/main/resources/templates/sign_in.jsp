@@ -8,39 +8,67 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">    <link rel="stylesheet" href="/css/index.css">
 </head>
 <body>
-    <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
-        <div class="container-fluid mx-3 d-flex">
-            <a class="navbar-brand d-flex no-wrap align-items-center" href="#">
-                <img src="/img/logo.jpg" alt="Company Logo" width="60" height="60">
-            </a>
-            <div class="collapse navbar-collapse justify-content-between">
-                <h3>Radosti.kz</h3>
+<nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
+    <ul class="container-fluid mx-3 d-flex mb-0">
+        <a class="navbar-brand d-flex no-wrap align-items-center" href="#">
+            <img src="/img/logo.jpg" alt="Company Logo" width="60" height="60">
+        </a>
+        <div class="collapse navbar-collapse justify-content-between">
+            <h3>Radosti.kz</h3>
 
-                <ul class="navbar-nav mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <form class="d-flex">
-                            <input class="form-control me-2 search-bar w-100" type="search" placeholder="Search" aria-label="Search">
-                            <button class="btn btn-outline-success" type="submit">Search</button>
-                        </form>
-                    </li>
-                </ul>
-            </div>
-            <ul class="navbar-nav ml-auto mb-2 mb-lg-0 flex-row">
+            <ul class="navbar-nav mb-2 mb-lg-0">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="fa-solid fa-user"></i>
-                        Sign Up
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">
-                        <i class="fa-solid fa-cart-shopping"></i>
-                        Cart
-                    </a>
+                    <form class="d-flex">
+                        <input class="form-control me-2 search-bar w-100" type="search" placeholder="Search" aria-label="Search">
+                        <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
                 </li>
             </ul>
         </div>
-    </nav>
+        <ul class="navbar-nav ml-auto mb-2 mb-lg-0 flex-row" th:if="${user == null}">
+            <li class="nav-item">
+                <a class="nav-link" href="/sign_in">
+                    <i class="fa-solid fa-user"></i>
+                    Sign Up
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/sign_in">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Cart
+                </a>
+            </li>
+        </ul>
+        <ul class="navbar-nav ml-auto mb-2 mb-lg-0 flex-row" th:if="${user}">
+            <li class="nav-item dropdown">
+                <a class="dropdown-toggle nav-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fa-solid fa-user"></i>
+                    <span th:utext="${user.firstname}"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a class="dropdown-item" href="/orders">
+                            <i class="fa-solid fa-cart-shopping"></i>
+                            Orders
+                        </a>
+                    </li>
+                    <li>
+                        <a class="dropdown-item" href="/users/logout">
+                            <i class="fa-solid fa-user"></i>
+                            Logout
+                        </a>
+                    </li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/cart">
+                    <i class="fa-solid fa-cart-shopping"></i>
+                    Cart
+                </a>
+            </li>
+        </ul>
+    </ul>
+</nav>
     <div>
         <main style="margin-top: 100px;">
             <div class="container mt-2 mt-md-5 d-flex justify-content-evenly flex-wrap flex-sm-nowrap">

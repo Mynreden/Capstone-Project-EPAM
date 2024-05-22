@@ -9,7 +9,6 @@ import javax.persistence.*;
 public class CartDTO {
     @Id
     @Column(name = "ID")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Long id;
 
     @Column(name = "TOTAL_PRICE")
