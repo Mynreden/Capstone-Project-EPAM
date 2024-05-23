@@ -3,14 +3,31 @@ package com.example.capstoneproject.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.*;
 import java.util.List;
 
+@Entity
+@Table(name = "PRODUCTS")
 public class Product {
-    private final Long id;
+    @Id
+    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(name = "NAME")
     private String name;
+
+    @Column(name = "DESCRIPTION")
     private String description;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id")
     private Category category;
-    private List<String> images;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Image> images;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ProductVariant> productVariants;
 
     private Long minPrice = 0L;
@@ -20,7 +37,7 @@ public class Product {
                         @JsonProperty("name") String name,
                         @JsonProperty("description") String description,
                         @JsonProperty("category") Category category,
-                        @JsonProperty("images") List<String> images,
+                        @JsonProperty("images") List<Image> images,
                    @JsonProperty("productVariants") List<ProductVariant> productVariants) {
         this.id = id;
         this.name = name;
@@ -28,6 +45,10 @@ public class Product {
         this.category = category;
         this.images = images;
         this.productVariants = productVariants;
+    }
+
+    public Product() {
+
     }
 
     public void setDescription(String description) {
@@ -42,7 +63,7 @@ public class Product {
         this.category = category;
     }
 
-    public void setImages(List<String> images) {
+    public void setImages(List<Image> images) {
         this.images = images;
     }
 
@@ -58,7 +79,7 @@ public class Product {
         return category;
     }
 
-    public List<String> getImages() {
+    public List<Image> getImages() {
         return images;
     }
 
@@ -83,11 +104,17 @@ public class Product {
     }
 
     public void calculateMinPrice(){
-        Long minPrice = getProductVariants()
-                .stream()
-                .mapToLong(ProductVariant::getPrice)
-                .min()
-                .orElse(0L);
-        setMinPrice(minPrice);
+        if (getProductVariants() != null){
+            Long minPrice = getProductVariants()
+                    .stream()
+                    .mapToLong(ProductVariant::getPrice)
+                    .min()
+                    .orElse(0L);
+            setMinPrice(minPrice);
+        }
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 }

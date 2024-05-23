@@ -134,7 +134,7 @@
 
                 <div class="col-6 col-md-4 col-lg-3 mb-5 mb-md-0 px-3" th:each="product : ${products}">
                     <a class="product-item" th:href="'./product/' + ${product.id}">
-                        <img th:if="${product.images != null and product.images.size() > 0}" th:src="${product.images[0]}" alt="Product Image" class="img-fluid product-thumbnail">
+                        <img th:if="${product.images != null and product.images.size() > 0}" th:src="${product.images[0].url}" alt="Product Image" class="img-fluid product-thumbnail">
                         <h3 class="product-title" th:utext="${product.name}">Name</h3>
                         <strong class="product-price">
                             KZT <span th:utext="${product.minPrice}">0</span>

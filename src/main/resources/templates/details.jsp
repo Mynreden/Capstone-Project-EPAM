@@ -77,7 +77,7 @@
                     <div class="slideshow-container">
                         <div th:each="image : ${product.images}">
                             <div class="mySlides">
-                                <img th:src="${image}" style="width:100%">
+                                <img th:src="${image.url}" style="width:100%">
                             </div>
                         </div>
                         <div class="d-flex flex-row flex-nowrap">

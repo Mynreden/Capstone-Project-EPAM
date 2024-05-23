@@ -1,6 +1,5 @@
-package com.example.capstoneproject.controllers.frontend;
+package com.example.capstoneproject.controllers;
 
-import com.example.capstoneproject.DTO.CartItemDTO;
 import com.example.capstoneproject.domain.Cart;
 import com.example.capstoneproject.domain.User;
 import com.example.capstoneproject.services.CartService;
@@ -42,7 +41,7 @@ public class CartController {
             return new RedirectView("/product/" + productVariantId);
         }
         Cart cart = optionalCart.get();
-        optionalCart = cartService.addCartItems(cart, productVariantId, 1);
+        optionalCart = cartService.addCartItems(cart.getId(), productVariantId, 1);
         if (optionalCart.isEmpty()){
             redirectAttributes.addFlashAttribute("message", "Something went wrong");
             String referer = request.getHeader("referer");

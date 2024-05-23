@@ -1,19 +1,30 @@
 package com.example.capstoneproject.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import java.util.List;
 
+import javax.persistence.*;
+import java.util.List;
+@Entity
+@Table(name = "CART")
 public class Cart {
-    private final Long id;
+    @Id
+    @Column(name = "ID")
+    private Long id;
+    @Column(name = "TOTAL_PRICE")
     private Long totalPrice;
-    private List<Item> items;
+    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<CartItem> cartItems;
 
     public Cart(@JsonProperty("id") Long id,
                 @JsonProperty("totalPrice") long totalPrice,
-                @JsonProperty("items") List<Item> items){
+                @JsonProperty("cartItems") List<CartItem> cartItems){
         this.id = id;
         this.totalPrice = totalPrice;
-        this.items = items;
+        this.cartItems = cartItems;
+    }
+
+    public Cart() {
+
     }
 
     public Long getId() {
@@ -28,11 +39,11 @@ public class Cart {
         this.totalPrice = totalPrice;
     }
 
-    public List<Item> getItems() {
-        return items;
+    public List<CartItem> getCartItems() {
+        return cartItems;
     }
 
-    public void setItems(List<Item> items) {
-        this.items = items;
+    public void setCartItems(List<CartItem> items) {
+        this.cartItems = items;
     }
 }

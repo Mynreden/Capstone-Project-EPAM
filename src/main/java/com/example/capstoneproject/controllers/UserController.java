@@ -1,6 +1,5 @@
-package com.example.capstoneproject.controllers.frontend;
+package com.example.capstoneproject.controllers;
 
-import com.example.capstoneproject.DTO.UserDTO;
 import com.example.capstoneproject.domain.User;
 import com.example.capstoneproject.services.UserService;
 import com.example.capstoneproject.services.interfaces.UserServiceInterface;
@@ -40,7 +39,7 @@ public class UserController {
             redirectAttributes.addFlashAttribute("message", "This email is already taken. Please try again.");
             return new RedirectView("/sign_in");
         }
-        Optional<User> optionalUser = userService.insertUser(new UserDTO(null, firstname, lastname, email, password, phone ));
+        Optional<User> optionalUser = userService.insertUser( firstname, lastname, email, password, phone );
         if (optionalUser.isEmpty()){
             redirectAttributes.addFlashAttribute("message", "Registration failed. Please try again.");
             return new RedirectView("/sign_in");
@@ -75,8 +74,7 @@ public class UserController {
     }
 
     @GetMapping("/logout")
-    public RedirectView logout(HttpSession session,
-                              RedirectAttributes redirectAttributes) {
+    public RedirectView logout(HttpSession session) {
         session.removeAttribute("user");
 
         return new RedirectView("/sign_in");

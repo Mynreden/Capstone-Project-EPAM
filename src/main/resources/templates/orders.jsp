@@ -11,7 +11,7 @@
 <body>
 <nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
     <ul class="container-fluid mx-3 d-flex mb-0">
-        <a class="navbar-brand d-flex no-wrap align-items-center" href="#">
+        <a class="navbar-brand d-flex no-wrap align-items-center" href="/">
             <img src="/img/logo.jpg" alt="Company Logo" width="60" height="60">
         </a>
         <div class="collapse navbar-collapse justify-content-between">
@@ -92,12 +92,12 @@
                                 <td th:text="'KZT ' + ${order.totalPrice}">Total Price</td>
                                 <td>
                                     <ul class="list-group list-group-horizontal-md">
-                                        <li th:each="item : ${order.items}" class="list-group-item">
+                                        <li th:each="item : ${order.orderItems}" class="list-group-item">
                                             <div class="row">
-                                                <span th:text="${item.productName}"></span>,
+                                                <span th:text="${item.productVariant.product.name}"></span>,
                                             </div>
                                             <div class="row">
-                                                <img th:src="${item.productImg}" style="width: 100px">,
+                                                <img th:src="${item.productVariant.product.images[0].url}" style="width: 100px">,
                                             </div>
                                             <div class="row">
                                                 <span th:text="'KZT ' + ${item.productVariant.price}"></span>

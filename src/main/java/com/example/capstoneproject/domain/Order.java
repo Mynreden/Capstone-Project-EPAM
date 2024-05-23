@@ -2,44 +2,64 @@ package com.example.capstoneproject.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
 
+@Entity
+@Table(name = "ORDERS")
 public class Order {
-    private final Long id;
-    private Long userId;
+    @Id
+    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+    @Column(name = "TOTAL_PRICE")
     private Long totalPrice;
-    private List<Item> items;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<OrderItem> orderItems;
+    @Column(name = "DATE")
     private Date date;
+    @Column(name = "STATUS")
     private String status;
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "address_id")
     private Address address;
 
     public Order(@JsonProperty("id") Long id,
-                 @JsonProperty("userId") Long userId,
+                 @JsonProperty("userId") User user,
                  @JsonProperty("totalPrice") long totalPrice,
-                 @JsonProperty("items") List<Item> items,
+                 @JsonProperty("items") List<OrderItem> orderItems,
                  @JsonProperty("date") Date date,
                  @JsonProperty("status") String status,
                  @JsonProperty("address") Address address){
         this.id = id;
-        this.userId = userId;
+        this.user = user;
         this.totalPrice = totalPrice;
-        this.items = items;
+        this.orderItems = orderItems;
         this.date = date;
         this.status = status;
         this.address = address;
+    }
+
+    public Order() {
+
     }
 
     public Long getId() {
         return id;
     }
 
-    public Long getUserId() {
-        return userId;
+    public User getUser() {
+        return user;
     }
 
-    public void setUserId(Long userId) {
-        this.userId = userId;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     public Long getTotalPrice() {
@@ -50,12 +70,12 @@ public class Order {
         this.totalPrice = totalPrice;
     }
 
-    public List<Item> getItems() {
-        return items;
+    public List<OrderItem> getOrderItems() {
+        return orderItems;
     }
 
-    public void setItems(List<Item> items) {
-        this.items = items;
+    public void setOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 
     public Date getDate() {

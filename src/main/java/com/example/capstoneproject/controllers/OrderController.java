@@ -1,18 +1,15 @@
-package com.example.capstoneproject.controllers.frontend;
+package com.example.capstoneproject.controllers;
 
-import com.example.capstoneproject.DTO.CartItemDTO;
-import com.example.capstoneproject.domain.Address;
-import com.example.capstoneproject.domain.Cart;
-import com.example.capstoneproject.domain.Order;
-import com.example.capstoneproject.domain.User;
+import com.example.capstoneproject.domain.*;
 import com.example.capstoneproject.services.CartService;
 import com.example.capstoneproject.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -45,7 +42,7 @@ public class OrderController {
         User user = (User) session.getAttribute("user");
         Optional<Address> optionalAddress = orderService.createAddress(city, street, house, apartment);
         if (optionalAddress.isEmpty()){
-            redirectAttributes.addAttribute("message", "Internal Error occurred. Please try again");
+            redirectAttributes.addFlashAttribute("message", "Internal Error occurred. Please try again");
             return new RedirectView("/cart");
         }
         orderService.createOrder(user.getId(), optionalAddress.get().getId());
@@ -58,10 +55,16 @@ public class OrderController {
                                    Model model){
         User user = (User) session.getAttribute("user");
         if (user == null){
-            redirectAttributes.addAttribute("message", "You must be logged in to see orders.");
+            redirectAttributes.addFlashAttribute("message", "You must be logged in to see orders.");
             return "redirect:/sign_in";
         }
         List<Order> orders = orderService.findOrdersByUserId(user.getId());
+        for (Order order : orders) {
+            for (OrderItem orderItem : order.getOrderItems()){
+                orderItem.getProductVariant().getProduct().getImages();
+            }
+            System.out.println(order.getOrderItems().size());
+        }
         model.addAttribute("orders", orders);
         model.addAttribute("user", user);
         return "orders";
@@ -82,8 +85,11 @@ public class OrderController {
             redirectAttributes.addFlashAttribute("message", "Internal error occurred");
             return "redirect:/";
         }
-
-        model.addAttribute("cart", optionalCart.get());
+        Cart cart = optionalCart.get();
+        for (CartItem cartItem : cart.getCartItems()){
+            cartItem.getProductVariant().getProduct().getImages();
+        }
+        model.addAttribute("cart", cart);
         model.addAttribute("user", user);
         return "order_creating";
     }

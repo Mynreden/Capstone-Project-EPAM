@@ -1,9 +1,11 @@
 package com.example.capstoneproject.services;
 
-import com.example.capstoneproject.DTO.*;
-import com.example.capstoneproject.controllers.frontend.CartController;
-import com.example.capstoneproject.domain.*;
-import com.example.capstoneproject.repositories.*;
+import com.example.capstoneproject.domain.Cart;
+import com.example.capstoneproject.domain.CartItem;
+import com.example.capstoneproject.domain.ProductVariant;
+import com.example.capstoneproject.repositories.CartItemRepository;
+import com.example.capstoneproject.repositories.CartRepository;
+import com.example.capstoneproject.repositories.ProductVariantRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,103 +17,80 @@ import java.util.Optional;
 public class CartService {
     private final CartRepository cartRepository;
     private final CartItemRepository cartItemRepository;
-    private final ProductService productService;
+    private final ProductVariantRepository productVariantRepository;
 
     @Autowired
     public CartService(CartRepository cartRepository,
                        CartItemRepository cartItemRepository,
-                        ProductService productService) {
+                       ProductVariantRepository productVariantRepository) {
         this.cartRepository = cartRepository;
         this.cartItemRepository = cartItemRepository;
-        this.productService = productService;
+        this.productVariantRepository = productVariantRepository;
     }
 
     public Optional<Cart> getCartById(Long id) {
-        Optional<Cart> optionalCart = findCartById(id);
-        if (optionalCart.isPresent()){
+        try {
+            Optional<Cart> optionalCart = cartRepository.findById(id);
+            if (optionalCart.isEmpty()){
+                return Optional.of(cartRepository.save(new Cart(null, 0, new ArrayList<>())));
+            }
             return optionalCart;
-        }
-        cartRepository.save(new CartDTO(id, 0));
-        return findCartById(id);
-    }
-
-    public Optional<Cart> addCartItems(Cart cart, Long productVariantId, int quantity){
-        Optional<CartItemDTO> optionalCartItemDTO = cartItemRepository.findByCartIdAndProductVariantId(cart.getId(), productVariantId);
-        if (optionalCartItemDTO.isPresent()){
-
-        }
-        CartItemDTO savedCartItemDTO = cartItemRepository.save(new CartItemDTO(null, cart.getId(),
-                productVariantId, quantity));
-        Item item = itemDTOToItem(savedCartItemDTO);
-        if (item == null){
+        } catch (Throwable error){
             return Optional.empty();
         }
-        cartRepository.save(new CartDTO(cart.getId(), cart.getTotalPrice() + item.getQuantity() * item.getProductVariant().getPrice()));
-        return findCartById(cart.getId());
+
     }
 
-    private Optional<Cart> findCartById(Long id){
-        Optional<CartDTO> optionalCartDTO = cartRepository.findById(id);
-        if (optionalCartDTO.isEmpty()){
+    public Optional<Cart> addCartItems(Long cartId, Long productVariantId, int quantity){
+        try {
+            Optional<Cart> optionalCart = cartRepository.findById(cartId);
+            if (optionalCart.isEmpty()){
+                return Optional.empty();
+            }
+            Cart cart = optionalCart.get();
+            for (CartItem cartItem : cart.getCartItems()){
+                if (cartItem.getProductVariant().getId().equals(productVariantId)){
+                    return changeProductAmountInCart(cart, productVariantId, 1);
+                }
+            }
+            Optional<ProductVariant> optionalProductVariant = productVariantRepository.findById(productVariantId);
+            if (optionalProductVariant.isEmpty()){
+                return Optional.empty();
+            }
+            ProductVariant productVariant = optionalProductVariant.get();
+            List<CartItem> cartItems = cart.getCartItems();
+            CartItem cartItem = new CartItem(null, productVariant, (long) quantity, cart);
+            cartItems.add(cartItem);
+            cart.setCartItems(cartItems);
+            cart.setTotalPrice(cart.getTotalPrice() + productVariant.getPrice());
+
+            cartRepository.save(cart);
+            return cartRepository.findById(cartId);
+        } catch (Throwable error){
             return Optional.empty();
         }
-        CartDTO cartDTO = optionalCartDTO.get();
-
-        List<CartItemDTO> cartItemDTOList = cartItemRepository.findAllByCartId(id);
-        List<Item> items = itemDTOListToItemList(cartItemDTOList);
-
-        return Optional.of(new Cart(id, cartDTO.totalPrice, items));
-    }
-
-    private List<Item> itemDTOListToItemList(List<CartItemDTO> orderItemDTOList){
-        List<Item> list = new ArrayList<>();
-        for (CartItemDTO orderItemDTO : orderItemDTOList){
-            Item item = itemDTOToItem(orderItemDTO);
-            list.add(item);
-        }
-        return list;
-    }
-    private Item itemDTOToItem(CartItemDTO cartItemDTO){
-        Optional<ProductVariant> optionalProductVariant = productService.getProductVariantById(cartItemDTO.productVariantId);
-        if (optionalProductVariant.isEmpty()){
-            return null;
-        }
-        ProductVariant productVariant = optionalProductVariant.get();
-        Optional<ProductDTO> optionalProductDTO = productService.getProductDTOByProductVariantId(productVariant.getId());
-
-        if (optionalProductDTO.isEmpty()){
-            return null;
-        }
-        ProductDTO productDTO = optionalProductDTO.get();
-        List<String> images = productService.getProductImagesByProductId(productDTO.id);
-        if (images.isEmpty()){
-            images.add("/img/default.png");
-        }
-        return new Item(cartItemDTO.id, productVariant, cartItemDTO.quantity, productDTO.id, productDTO.name, images.get(0));
     }
 
     public Optional<Cart> changeProductAmountInCart(Cart cart, Long productVariantId, int action){
-        Optional<CartItemDTO> optionalCartItemDTO = cartItemRepository.findByCartIdAndProductVariantId(cart.getId(), productVariantId);
-        if (optionalCartItemDTO.isEmpty()){
+        try {
+            for (CartItem cartItem : cart.getCartItems()){
+                if (cartItem.getProductVariant().getId().equals(productVariantId)){
+                    cartItem.setQuantity(cartItem.getQuantity() + action);
+                    if (cartItem.getQuantity() == 0){
+                        List<CartItem> cartItems = cart.getCartItems();
+                        cartItems.remove(cartItem);
+                        cartItemRepository.delete(cartItem);
+                        cart.setCartItems(cartItems);
+                    }
+                    cart.setTotalPrice(cart.getTotalPrice() + cartItem.getProductVariant().getPrice() * action);
+                    return Optional.of(cartRepository.save(cart));
+                }
+            }
+            return Optional.empty();
+        } catch (Throwable error){
+            System.out.println(error.getMessage());
             return Optional.empty();
         }
-        CartItemDTO cartItemDTO = optionalCartItemDTO.get();
-
-        if (cartItemDTO.quantity + action == 0){
-            cartItemRepository.delete(cartItemDTO);
-        } else {
-            cartItemDTO.quantity = cartItemDTO.quantity + action;
-            cartItemRepository.save(cartItemDTO);
-
-        }
-        Optional<ProductVariant> optionalProductVariant = productService.getProductVariantById(productVariantId);
-        if (optionalProductVariant.isEmpty()){
-            return Optional.empty();
-        }
-
-        cartRepository.save(new CartDTO(cart.getId(), cart.getTotalPrice() + optionalProductVariant.get().getPrice() * action));
-
-        return getCartById(cart.getId());
     }
 
 }

@@ -3,14 +3,24 @@ package com.example.capstoneproject.domain;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
+import javax.persistence.*;
 
+@Entity
+@Table(name = "Users")
 public class User {
-    private final Long id;
+    @Id
+    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "FIRSTNAME")
     private String firstname;
+    @Column(name = "LASTNAME")
     private String lastname;
+    @Column(name = "EMAIL")
     private String email;
+    @Column(name = "PASSWORD")
     private String password;
+    @Column(name = "PHONE")
     private String phone;
     @JsonCreator
     public User(@JsonProperty("id") Long id,
@@ -25,6 +35,14 @@ public class User {
         this.email = email;
         this.password = password;
         this.phone = phone;
+    }
+
+    public User() {
+
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public Long getId() {
@@ -61,5 +79,13 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 }

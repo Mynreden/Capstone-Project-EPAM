@@ -1,1 +1,0 @@
-INSERT INTO PRODUCTS values ( 'Canopy',  )

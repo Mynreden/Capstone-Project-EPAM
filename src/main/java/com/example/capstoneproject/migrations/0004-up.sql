@@ -12,5 +12,6 @@ CREATE TABLE cart_item (
     product_variant_id BIGINT NOT NULL,
     quantity INT NOT NULL,
     FOREIGN KEY (cart_id) REFERENCES cart(id),
-    FOREIGN KEY (product_variant_id) REFERENCES ProductVariants(ID)
+    FOREIGN KEY (product_variant_id) REFERENCES ProductVariants(ID),
+    CONSTRAINT unique_product_variant_cart UNIQUE (product_variant_id, cart_id)
 );

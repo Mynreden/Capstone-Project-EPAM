@@ -1,13 +1,11 @@
-package com.example.capstoneproject.controllers.frontend;
+package com.example.capstoneproject.controllers;
 
 import com.example.capstoneproject.domain.Cart;
+import com.example.capstoneproject.domain.CartItem;
 import com.example.capstoneproject.domain.Product;
-import com.example.capstoneproject.domain.ProductVariant;
 import com.example.capstoneproject.domain.User;
 import com.example.capstoneproject.services.CartService;
 import com.example.capstoneproject.services.ProductService;
-import com.example.capstoneproject.services.interfaces.ProductServiceInterface;
-import org.dom4j.rule.Mode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -22,7 +20,7 @@ import java.util.Optional;
 
 @Controller
 public class FrontendController {
-    private final ProductServiceInterface productService;
+    private final ProductService productService;
     private final CartService cartService;
 
     @Autowired
@@ -37,6 +35,9 @@ public class FrontendController {
         List<Product> products = productService.getAllProducts();
         User user = (User) session.getAttribute("user");
         model.addAttribute("user", user);
+        for (Product product : products){
+            product.getImages(); // unpacking
+        }
         model.addAttribute("products", products);
         return "index";
     }
@@ -50,6 +51,7 @@ public class FrontendController {
             return "error";
         }
         Product product = optionalProduct.get();
+        product.getImages(); // unpacking
         model.addAttribute(product);
         User user = (User) session.getAttribute("user");
         model.addAttribute("user", user);
@@ -81,7 +83,10 @@ public class FrontendController {
             redirectAttributes.addFlashAttribute("message", "Internal error occurred");
             return "redirect:/";
         }
-
+        Cart cart = optionalCart.get();
+        for (CartItem cartItem : cart.getCartItems()){
+            cartItem.getProductVariant().getProduct().getImages();
+        }
         model.addAttribute("cart", optionalCart.get());
         model.addAttribute("user", user);
         return "cart";

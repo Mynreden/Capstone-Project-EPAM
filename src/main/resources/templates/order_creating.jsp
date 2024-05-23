@@ -73,7 +73,7 @@
 <div>
     <main>
         <form method="post" action="/orders/create" id="orderForm" onsubmit="return validateForm()">
-            <div class="hero" class="mb-4">
+            <div class="hero mb-4">
                 <div class="container">
                     <div class="row justify-content-between">
                         <div class="col-lg-5">
@@ -119,12 +119,12 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr th:each="item : ${cart.items}">
+                                    <tr th:each="item : ${cart.cartItems}">
                                         <td class="product-thumbnail">
-                                            <img th:src="@{${item.productImg}}" alt="Image" class="img-fluid" style="max-width: 100px; max-height: 100px;">
+                                            <img th:src="@{${item.productVariant.product.images[0].url}}" alt="Image" class="img-fluid" style="max-width: 100px; max-height: 100px;">
                                         </td>
                                         <td class="product-name">
-                                            <h2 class="h5 text-black" th:text="${item.productName}"></h2>
+                                            <h2 class="h5 text-black" th:text="${item.productVariant.product.name}"></h2>
                                             <p class="text-black" th:text="${(item.productVariant.size != null ? 'Size: ' + item.productVariant.size : '') +
                                                 (item.productVariant.size != null && item.productVariant.color != null ? ', ' : '') +
                                                 (item.productVariant.color != null ? 'Color: ' + item.productVariant.color : '')}">

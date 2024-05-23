@@ -2,13 +2,22 @@ package com.example.capstoneproject.domain;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import javax.persistence.*;
+
+@Entity
+@Table(name = "ADDRESSES")
 public class Address {
-    private final Long id;
+    @Id
+    @Column(name = "ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @Column(name = "city")
     private String city;
+    @Column(name = "street")
     private String street;
-
+    @Column(name = "house")
     private String house;
-
+    @Column(name = "apartment")
     private String apartment;
 
     public Address(@JsonProperty("id") Long id,
@@ -21,6 +30,10 @@ public class Address {
         this.street = street;
         this.house = house;
         this.apartment = apartment;
+    }
+
+    public Address() {
+
     }
 
 
