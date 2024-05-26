@@ -4,6 +4,9 @@ import com.example.capstoneproject.domain.*;
 import com.example.capstoneproject.repositories.AddressRepository;
 import com.example.capstoneproject.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -58,15 +61,20 @@ public class OrderService {
                 return Optional.empty();
             }
             Address address = optionalAddress.get();
-            Order order = orderRepository.save(new Order(null, user, cart.getTotalPrice(), new ArrayList<>(), new Date(), "In progress",address));
+            Order order = orderRepository.save(new Order(null, user, cart.getTotalPrice(), new ArrayList<>(), new Date(), OrderStatus.Pending,address));
 
             List<OrderItem> orderItems = new ArrayList<>();
             for (CartItem cartItem : cart.getCartItems()){
-                orderItems.add(new OrderItem(cartItem.getId(), cartItem.getProductVariant(), cartItem.getQuantity(), order));
+                orderItems.add(new OrderItem(null, cartItem.getProductVariant(), cartItem.getQuantity(), order));
+                System.out.println(cartItem.getProductVariant().getPrice());
             }
             order.setOrderItems(orderItems);
-            return Optional.of(orderRepository.save(order));
-        } catch (Throwable error){
+
+            order = orderRepository.save(order);
+
+            return Optional.of(order);
+        } catch (Error error){
+            System.out.println(error.getMessage());
             return Optional.empty();
         }
     }
@@ -88,7 +96,18 @@ public class OrderService {
         }
     }
 
+    public void updateOrderStatus(Long orderId, String status) {
+        Order order = orderRepository.findById(orderId).orElseThrow(() -> new IllegalArgumentException("Invalid order Id:" + orderId));
+        order.setStatus(OrderStatus.valueOf(status));
+        System.out.println(order.getStatus().name());
+        orderRepository.save(order);
+    }
 
-
-
+    public Page<Order> getOrders(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return orderRepository.findAll(pageable);
+    }
+    public List<Order> getOrders() {
+        return orderRepository.findAll();
+    }
 }

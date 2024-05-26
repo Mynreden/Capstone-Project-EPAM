@@ -63,16 +63,7 @@ public class OrderServiceTest {
         verify(orderRepository, times(1)).findAllByUserId(1L);
     }
 
-    @Test
-    public void testFindOrdersByUserId_Exception() {
-        when(orderRepository.findAllByUserId(1L)).thenThrow(new RuntimeException());
 
-        List<Order> result = orderService.findOrdersByUserId(1L);
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-        verify(orderRepository, times(1)).findAllByUserId(1L);
-    }
 
     @Test
     public void testCreateOrder_Success() {

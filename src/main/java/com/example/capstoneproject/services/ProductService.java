@@ -2,7 +2,6 @@ package com.example.capstoneproject.services;
 
 import com.example.capstoneproject.domain.Product;
 import com.example.capstoneproject.repositories.ProductRepository;
-import com.example.capstoneproject.services.interfaces.ProductServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -10,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class ProductService implements ProductServiceInterface {
+public class ProductService {
     private final ProductRepository productRepository;
 
     @Autowired
@@ -41,6 +40,14 @@ public class ProductService implements ProductServiceInterface {
             return Optional.of(product);
         } catch (Throwable error){
             return Optional.empty();
+        }
+    }
+
+    public void saveProduct(Product product){
+        try {
+            productRepository.save(product);
+        } catch (Throwable error){
+            System.out.println(error.getMessage());
         }
     }
 

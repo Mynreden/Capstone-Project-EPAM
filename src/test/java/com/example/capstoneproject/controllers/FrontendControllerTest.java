@@ -2,7 +2,7 @@ package com.example.capstoneproject.controllers;
 
 import com.example.capstoneproject.domain.User;
 import com.example.capstoneproject.services.CartService;
-import com.example.capstoneproject.services.interfaces.ProductServiceInterface;
+import com.example.capstoneproject.services.ProductService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 public class FrontendControllerTest {
 
     @Mock
-    private ProductServiceInterface productService;
+    private ProductService productService;
 
     @Mock
     private CartService cartService;

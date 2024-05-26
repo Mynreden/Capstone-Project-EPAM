@@ -9,67 +9,9 @@
     <link rel="stylesheet" href="./css/index.css">
 </head>
 <body>
-<nav class="navbar navbar-expand-md navbar-light bg-light sticky-top">
-    <ul class="container-fluid mx-3 d-flex mb-0">
-        <a class="navbar-brand d-flex no-wrap align-items-center" href="#">
-            <img src="/img/logo.jpg" alt="Company Logo" width="60" height="60">
-        </a>
-        <div class="collapse navbar-collapse justify-content-between">
-            <h3>Radosti.kz</h3>
 
-            <ul class="navbar-nav mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <form class="d-flex">
-                        <input class="form-control me-2 search-bar w-100" type="search" placeholder="Search" aria-label="Search">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                    </form>
-                </li>
-            </ul>
-        </div>
-        <ul class="navbar-nav ml-auto mb-2 mb-lg-0 flex-row" th:if="${user == null}">
-            <li class="nav-item">
-                <a class="nav-link" href="/sign_in">
-                    <i class="fa-solid fa-user"></i>
-                    Sign Up
-                </a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/sign_in">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    Cart
-                </a>
-            </li>
-        </ul>
-        <ul class="navbar-nav ml-auto mb-2 mb-lg-0 flex-row" th:if="${user}">
-            <li class="nav-item dropdown">
-                <a class="dropdown-toggle nav-link" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-                    <i class="fa-solid fa-user"></i>
-                    <span th:utext="${user.firstname}"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a class="dropdown-item" href="/orders">
-                            <i class="fa-solid fa-cart-shopping"></i>
-                            Orders
-                        </a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="/users/logout">
-                            <i class="fa-solid fa-user"></i>
-                            Logout
-                        </a>
-                    </li>
-                </ul>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="/cart">
-                    <i class="fa-solid fa-cart-shopping"></i>
-                    Cart
-                </a>
-            </li>
-        </ul>
-    </ul>
-</nav>
+<div th:replace="fragments/nav :: nav"></div>
+
 <div>
     <main>
         <form method="post" action="/orders/create" id="orderForm" onsubmit="return validateForm()">
@@ -185,36 +127,8 @@
 </div>
 
 
-<footer class="footer mt-5 pt-4">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-4 d-flex align-items-center justify-content-center">
-                <a class="navbar-brand" href="#">
-                    <img src="/img/logo.jpg" alt="Company Logo" width="100" height="100">
-                </a>
-            </div>
-            <!-- Ссылки на товары -->
-            <div class="col-md-4 footer-links flex-row">
-                <a href="#" class="text-center">Canopy</a>
-                <a href="#" class="text-center">Wigwam</a>
-                <a href="#" class="text-center">Bed Linen</a>
-                <a href="#" class="text-center">Pillows</a>
-            </div>
-            <!-- Социальные сети -->
-            <div class="mt-2 mt-md-0 col-md-4 d-flex align-items-center flex-column justify-content-evenly">
-                <a href="https://www.instagram.com" target="_blank" class="text-decoration-none text-black">
-                    <i class="fab fa-instagram"></i> Instagram
-                </a>
-                <a href="https://www.whatsapp.com" target="_blank" class="text-decoration-none text-black">
-                    <i class="fab fa-whatsapp"></i> WhatsApp
-                </a>
-                <a href="https://www.telegram.org" target="_blank" class="text-decoration-none text-black">
-                    <i class="fab fa-telegram"></i> Telegram
-                </a>
-            </div>
-        </div>
-    </div>
-</footer>
+<div th:replace="fragments/footer :: footer"></div>
+
 
 <div th:if="${message}">
     <!-- Modal -->

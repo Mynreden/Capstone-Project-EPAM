@@ -93,4 +93,8 @@ public class CartService {
         }
     }
 
+    void save(Cart cart){
+        cartRepository.save(cart);
+    }
+
 }

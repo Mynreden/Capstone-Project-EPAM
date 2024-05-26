@@ -24,8 +24,9 @@ public class Order {
     private List<OrderItem> orderItems;
     @Column(name = "DATE")
     private Date date;
+    @Enumerated(EnumType.STRING)
     @Column(name = "STATUS")
-    private String status;
+    private OrderStatus status;
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "address_id")
     private Address address;
@@ -35,7 +36,7 @@ public class Order {
                  @JsonProperty("totalPrice") long totalPrice,
                  @JsonProperty("items") List<OrderItem> orderItems,
                  @JsonProperty("date") Date date,
-                 @JsonProperty("status") String status,
+                 @JsonProperty("status") OrderStatus status,
                  @JsonProperty("address") Address address){
         this.id = id;
         this.user = user;
@@ -86,11 +87,11 @@ public class Order {
         this.date = date;
     }
 
-    public String getStatus() {
+    public OrderStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(OrderStatus status) {
         this.status = status;
     }
 

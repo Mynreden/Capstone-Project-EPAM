@@ -2,7 +2,6 @@ package com.example.capstoneproject.controllers;
 
 import com.example.capstoneproject.domain.User;
 import com.example.capstoneproject.services.UserService;
-import com.example.capstoneproject.services.interfaces.UserServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +18,7 @@ import java.util.Optional;
 @RequestMapping("/users")
 public class UserController {
 
-    private final UserServiceInterface userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService userService){
@@ -70,12 +69,15 @@ public class UserController {
         User user = optionalUser.get();
         session.setAttribute("user", user);
 
+        session.setAttribute("isAdmin", userService.isAdmin(user));
+
         return new RedirectView("/");
     }
 
     @GetMapping("/logout")
     public RedirectView logout(HttpSession session) {
         session.removeAttribute("user");
+        session.removeAttribute("isAdmin");
 
         return new RedirectView("/sign_in");
     }

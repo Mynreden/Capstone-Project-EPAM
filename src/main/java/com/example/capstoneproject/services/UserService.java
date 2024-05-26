@@ -1,8 +1,9 @@
 package com.example.capstoneproject.services;
 
+import com.example.capstoneproject.domain.Admin;
 import com.example.capstoneproject.domain.User;
+import com.example.capstoneproject.repositories.AdminRepository;
 import com.example.capstoneproject.repositories.UserRepository;
-import com.example.capstoneproject.services.interfaces.UserServiceInterface;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -10,14 +11,18 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class UserService implements UserServiceInterface {
+public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final AdminRepository adminRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository,
+                       PasswordEncoder passwordEncoder,
+                       AdminRepository adminRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.adminRepository = adminRepository;
     }
 
     public Optional<User> findById(Long id) {
@@ -57,5 +62,10 @@ public class UserService implements UserServiceInterface {
         } catch (Throwable error){
             return Optional.empty();
         }
+    }
+
+    public boolean isAdmin(User user){
+        Optional<Admin> optionalAdmin = adminRepository.findById(user.getId());
+        return optionalAdmin.isPresent();
     }
 }
